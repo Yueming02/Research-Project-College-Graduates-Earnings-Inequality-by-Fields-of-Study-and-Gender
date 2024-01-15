@@ -1,3 +1,5 @@
+# Fields of Study and Earnings Inequality with Highlight on a Gender-Specific Perspective
+
 Does a college degree equally benefit every graduate in terms of earnings? Many 
 individuals invest thousands of dollars each year to pursue a bachelor’s degree; however, a 
 college degree does not always guarantee a decent salary for all graduates despite the steep 
