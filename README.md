@@ -5,6 +5,7 @@ cost of tuition. The labour market outcomes are ideal for some people while much
 others. Although this disparity can be affected by factors such as innate abilities and family 
 backgrounds, fields of study, as the most intuitive horizontal stratification for college students, 
 may play an essential role in determining earnings inequality among college graduates.
+
 When discussing educational attainment and wage inequality, most research often 
 focuses on the effect of the highest level of education while neglecting the differences in 
 degrees in various fields. In the twenty-first century, as opposed to the period before 2000, 
@@ -14,15 +15,17 @@ inequality among individuals with college degrees (Autor, Goldin, and Katz 2020)
 implies that the wage gap between bachelor’s degree holders and high school graduates is 
 still valid, of course, but other dimensions of education that help explain the wage inequality 
 among college graduates can become increasingly crucial.
+
 To explore the impact of fields of study on the earnings gap, this dissertation will 
 utilize the US National Survey of College Graduates (NSCG) in 2019 and perform OLS 
 regression to draw inferences on the magnitude of impact on annual salary by fields of study
 of bachelor’s degree. The NSCG public use microdata contains demographic and family 
-background information (e.g., parent's education level), which are appropriate to include in 
+background information (e.g., parent's education level), which is appropriate to include in 
 the model as control variables. First, I picture the overall effect of fields of study on annual 
 salary under different sets of covariates; second, I compare the impact on earnings across 
 fields of study within gender and investigate the interaction effects of gender and fields of 
 study on earnings.
+
 The findings reveal that certain traditional STEM majors, such as engineering and 
 computer science, tend to remarkably boost earnings in comparison to other STEM majors,
 such as biology. Non-STEM fields, except for management, are likely to yield adverse effects. 
@@ -31,6 +34,7 @@ regardless of gender. Furthermore, females benefit more from a degree in enginee
 there is almost no gender pay gap on average for engineering degree holders. In contrast,
 females with degrees in female-dominated fields like education and health are relatively 
 disadvantaged in earnings.
+
 This empirical study aims to facilitate a better understanding of wage inequality 
 among college graduates. However, the significance of this study is not to suggest that 
 choosing specific majors may be superior to choosing others under high salary expectations. 
