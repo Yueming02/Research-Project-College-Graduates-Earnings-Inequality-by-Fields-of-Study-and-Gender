@@ -1,0 +1,185 @@
+---
+title: "Descriptive statistics"
+output: html_document
+date: "2023-11-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE) 
+knitr::opts_chunk$set(warning = FALSE) 
+options(kableExtra.auto_format = FALSE)
+knitr::opts_chunk$set(fig.pos = "!H", out.extra = "")
+knitr::knit_engines$set(text = function(options) {
+  code <- paste(options$code, collapse = "\n")
+})
+knitr::opts_chunk$set(message=FALSE, tidy.opts=list(width.cutoff=75), tidy=TRUE) 
+```
+
+```{r}
+library(tidycensus)
+library(tidyverse)
+library(readr)
+library(survey)
+library(srvyr)
+library(convey)
+library(dplyr)
+library(tidyr)
+library(plm)
+library(ineq)
+library(ggplot2)
+library(scales)
+library(car)
+library(gtsummary)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(stargazer)
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r}
+filtered <- read.csv('filtered.csv')
+```
+
+
+```{r}
+#as survey
+filtersurvey <- svydesign(id=~1, weights=~WTSURVY, data=filtered)
+```
+
+Summary statistics
+```{r, table1}
+#summary statistics
+t10 <- svyby(~Salary, ~AllMajor, filtersurvey, svymean)
+
+t11 <- svyby(~Salary, ~AllMajor, filtersurvey, svyquantile, quantiles = c(0.25, 0.5, 0.75))
+
+t12 <- filtersurvey %>% 
+  tbl_svysummary(
+    # Use include to select variables
+    include = c(AllMajor),
+    statistic = list(all_continuous()  ~ "{mean} ({sd})",
+                     all_categorical() ~ "{n}    ({p}%)"),
+    digits = list(
+                  all_categorical() ~ c(0, 1))
+  ) %>%
+  modify_header(label = "**Fields of study**") %>%
+  modify_caption("Estimated number and percentage of graduates by fields of study (weighted)") %>%
+  bold_labels()
+
+t10 <- data.frame(t10)
+t11 <- data.frame(t11)
+t12 <- data.frame(t12)
+t12 <- t12[c(2,3,4,5,6,7,8,9,10,11), ]
+table1 <- cbind(t10, t11,t12)
+
+
+stargazer(table1, type = "latex", digits = 0, summary = FALSE, 
+          column.labels = c("25th", "50th", "75th"), 
+          dep.var.caption = "Salary Quantiles by Major", 
+          dep.var.labels.include = FALSE,
+          keep=c(2,3,6,7,8,13)
+          )
+```
+
+
+```{r, table2}
+table2 <- filtersurvey %>% 
+  tbl_svysummary(
+    by = GENDER,
+    include = c(AllMajor),
+    statistic = list(all_continuous()  ~ "{mean} ({sd})",
+                     all_categorical() ~ "{n}    ({p}%)"),
+    digits = list(
+                  all_categorical() ~ c(0, 1))
+  ) %>%
+  modify_header(label = "**Gender**") %>%
+  modify_caption("Estimated number and percentage of graduates by fields of study and gender(weighted)") %>%
+  bold_labels()
+
+table2 <- data.frame(table2)
+table2 <- table2[c(2,3,4,5,6,7,8,9,10,11), ]
+
+stargazer(table2, type = "latex", digits = 0, summary = FALSE, 
+          column.labels = c("25th", "50th", "75th"), 
+          dep.var.caption = "Salary Quantiles by Major", 
+          dep.var.labels.include = FALSE,
+          keep = c(2,3,4)
+          )
+```
+
+```{r, table3}
+table3 <- filtersurvey %>% 
+  tbl_svysummary(
+    # Use include to select variables
+    by = AllMajor,
+    include = c(GENDER),
+    statistic = list(#all_continuous()  ~ "{mean} ({sd})",
+                     all_categorical() ~ "{n}    ({p}%)"),
+                     #all_categorical() ~ "({p}%)"),
+    digits = list(
+                  all_categorical() ~ c(0, 1))
+  ) %>%
+  modify_header(label = "Fields") %>%
+  modify_caption("Estimated ratio of graduates in each gender by fields of study (weighted)") %>%
+  bold_labels()
+
+```
+
+```{r}
+table3 <- data.frame(table3)
+table3 <- table3[c(2,3), ]
+rownames(table3) <- table3$Fields
+
+table3 <- table3[, -which(names(table3) == "Fields")]
+
+t33 <- t(table3)
+
+
+```
+
+```{r}
+stargazer(t33, type = "latex", digits = 2, summary = FALSE, 
+          column.labels = c("25th", "50th", "75th"), 
+          dep.var.caption = "Salary Quantiles by Major", 
+          dep.var.labels.include = FALSE
+          )
+#gt::gtsave(t1, filename = "output_table.png")
+```
+
+
+
+Gender pay gap
+```{r}
+filteredF <- filtered %>%
+  filter(Female == 1)
+
+filteredM <- filtered %>%
+  filter(Female == 0)
+
+filteredF <- svydesign(id=~1, weights=~WTSURVY, data=filteredF)
+filteredM <- svydesign(id=~1, weights=~WTSURVY, data=filteredM)
+```
+
+
+```{r}
+tF <- svyby(~Salary, ~AllMajor, filteredF, svymean)
+tM <- svyby(~Salary, ~AllMajor, filteredM, svymean)
+
+tF <- data.frame(tF)
+tM <- data.frame(tM)
+
+tF <- tF[ , c(1,2,3)]
+tM <- tM[ , c(1,2,3)]
+
+tableFM <- cbind(tF, tM)
+
+stargazer(tableFM, type = "latex", digits = 0, summary = FALSE, 
+          
+          dep.var.labels.include = FALSE,
+          keep=c(2,3,4,6,7)
+          )
+```
